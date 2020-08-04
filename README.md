@@ -7,6 +7,16 @@
 
 ```Go
 // listen on the same port. oh yeah.
-l1, _ := tlsreuse.Listen("tcp", "127.0.0.1:1234")
-l2, _ := tlsreuse.Listen("tcp", "127.0.0.1:1234")
+crt, err := tls.LoadX509KeyPair("key.crt", "cert.key")
+if err != nil {
+  panic(err)
+}
+tlsConfig := &tls.Config{}
+tlsConfig.Certificates = []tls.Certificate{crt}
+tlsConfig.Time = time.Now
+tlsConfig.Rand = rand.Reader
+
+
+l1, _ := tlsreuse.Listen("tcp", "127.0.0.1:1234", tlsConfig)
+l2, _ := tlsreuse.Listen("tcp", "127.0.0.1:1234", tlsConfig)
 ```
